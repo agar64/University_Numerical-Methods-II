@@ -1,0 +1,52 @@
+import numpy as np
+from scipy.ndimage import gaussian_filter
+from scipy.signal import convolve2d
+import matplotlib.pyplot as plt
+
+def gaussian_blur(image, sigma=1):
+    return gaussian_filter(image, sigma=sigma)
+
+def sobel_filter(image):
+    sobel_x = np.array([[-1, 0, 1], [-2, 0, 2], [-1, 0, 1]])
+    sobel_y = np.array([[-1, -2, -1], [0, 0, 0], [1, 2, 1]])
+    
+    gradient_x = convolve2d(image, sobel_x, mode='same', boundary='symm')
+    gradient_y = convolve2d(image, sobel_y, mode='same', boundary='symm')
+    
+    gradient_x_squared = gradient_x ** 2
+    gradient_y_squared = gradient_y ** 2
+    
+    gradient_magnitude = np.sqrt(gradient_x_squared + gradient_y_squared)
+    
+    return gradient_magnitude
+
+def apply_threshold(image, threshold):
+    return np.where(image < threshold, 0, 1)
+
+def display_image(image):
+    plt.imshow(image, cmap='gray')
+    plt.axis('off')
+    plt.show()
+
+def random_image():
+    # Exemplo de imagem
+    return np.random.rand(100, 100) # Imagem aleatória de 100x100
+
+def Alg01(image):
+    
+    # Passo 1: Suavização da imagem com filtro Gaussiano
+    smoothed_image = gaussian_blur(image, sigma=1)
+    
+    # Passo 2: Aplicação do filtro convolucional de Gradiente
+    gradient_image = sobel_filter(smoothed_image)
+    
+    # Passo 3: Escolha do valor de threshold (substitua 0.5 pelo valor desejado)
+    threshold = 0.5
+    
+    # Passo 4: Geração da matriz final com base no threshold
+    final_image = apply_threshold(gradient_image, threshold)
+    
+    # Exemplo de exibição da matriz final
+    print("Matriz Final:")
+    print(final_image)
+    display_image(final_image)
